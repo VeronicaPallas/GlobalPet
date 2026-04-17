@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalPet | Logística Turística Internacional</title>
+    <style>
+        /* 1. BASE */
+        html { scroll-behavior: smooth; }
+        body { margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #F8F7F2; color: #4A5D4E; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* 2. HEADER */
+        header { background-color: #A3B18A; display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; color: white; position: sticky; top: 0; z-index: 2000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { font-weight: 800; letter-spacing: 2px; font-size: 1.5rem; text-transform: uppercase; }
+        .nav-links { position: absolute; top: 100%; right: 20px; width: 220px; background-color: #BC6C25; display: flex; flex-direction: column; border-radius: 0 0 12px 12px; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 3000; }
+        .nav-links.active { opacity: 1; visibility: visible; }
+        .nav-links a { color: white; text-decoration: none; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; }
+        .menu-hamburguesa { cursor: pointer; } .menu-hamburguesa div { width: 25px; height: 3px; background-color: white; margin: 5px 0; border-radius: 3px; }
+
+        /* 3. BUSCADOR */
+        .buscador-container { background-color: #4A5D4E; padding: 30px; margin: 30px auto; max-width: 1100px; border-radius: 15px; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        .buscador-form { display: flex; flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 15px; }
+        .campo { display: flex; flex-direction: column; flex: 1; }
+        .campo label { font-size: 0.7rem; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; color: #A3B18A; letter-spacing: 1px; }
+        .campo select, .campo input { height: 45px; padding: 0 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: white; color: #4A5D4E; font-size: 0.9rem; }
+        .btn-buscar { background-color: #BC6C25; color: white; border: none; height: 45px; padding: 0 30px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* 4. SECCIONES */
+        .seccion-padding { max-width: 1200px; margin: 80px auto; padding: 0 20px; overflow: hidden; }
+        .titulo-seccion { text-align: left; margin-bottom: 40px; border-left: 6px solid #A3B18A; padding-left: 20px; }
+        .titulo-seccion h2 { font-size: 2rem; margin: 0; color: #4A5D4E; }
+
+        /* 5. CARRUSEL */
+        .carrusel-track { display: flex; gap: 30px; width: calc(320px * 12 + 360px); animation: scroll 45s linear infinite; }
+        .carrusel-track:hover { animation-play-state: paused; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(calc(-320px * 6 - 180px)); } }
+
+        .card-paquete { flex: 0 0 320px; background: white; border-radius: 20px; padding: 40px 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border: 1px solid #eee; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; }
+        .card-paquete::before { content: ""; position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px; border: 1px solid #F5F5DC; border-radius: 15px; pointer-events: none; }
+        .card-paquete h3 { color: #BC6C25; margin: 0 0 15px 0; font-size: 1.4rem; font-family: 'Georgia', serif; font-style: italic; }
+        .card-paquete p { font-size: 0.95rem; color: #666; line-height: 1.6; margin: 0; font-weight: 300; }
+        .card-paquete .tag-destino { margin-top: 20px; font-size: 0.75rem; color: #A3B18A; text-transform: uppercase; font-weight: 700; letter-spacing: 2px; }
+
+        /* 6. EXPERIENCIAS */
+        .experiencias-container { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; }
+        .foto-card { flex: 0 0 300px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .foto-placeholder { width: 100%; height: 250px; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
+        .foto-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 7. FAQ */
+        .faq-categoria { margin-top: 50px; text-align: left; }
+        .faq-categoria h3 { color: #4A5D4E; font-size: 1.2rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        details { background: white; margin-bottom: 12px; border-radius: 10px; padding: 15px 20px; border: 1px solid #eee; cursor: pointer; }
+        summary { font-weight: 600; color: #4A5D4E; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+        summary::after { content: "+"; color: #BC6C25; font-size: 1.2rem; }
+        details[open] summary::after { content: "−"; }
+        details p { margin-top: 15px; font-size: 0.95rem; line-height: 1.7; color: #666; border-top: 1px solid #f9f9f9; padding-top: 15px; }
+
+        /* 8. FOOTER DISTRIBUIDO */
+        footer { background-color: #4A5D4E; color: white; padding: 60px 80px; }
+        .footer-content { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+        .footer-info { text-align: left; }
+        .footer-logo { font-size: 1.8rem; font-weight: bold; color: #A3B18A; letter-spacing: 2px; margin-bottom: 10px; }
+        .footer-text { font-size: 0.85rem; line-height: 1.6; color: rgba(255,255,255,0.8); }
+        .footer-redes { display: flex; gap: 15px; }
+        .btn-social { color: #F8F7F2; text-decoration: none; font-size: 0.7rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1.5px; padding: 10px 18px; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; transition: 0.3s; }
+        .btn-social:hover { background-color: #BC6C25; border-color: #BC6C25; }
+
+        .wpp-flotante { position: fixed; bottom: 30px; right: 30px; background-color: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 5000; text-decoration: none; font-weight: bold; }
+
+        @media (max-width: 900px) { .footer-content { flex-direction: column; text-align: center; gap: 40px; } .footer-info { text-align: center; } footer { padding: 40px 20px; } .buscador-form { flex-direction: column; } }
+    </style>
+</head>
+<body id="inicio">
+
+    <header>
+        <div class="logo">GLOBALPET</div>
+        <div class="menu-hamburguesa" onclick="toggleMenu()">
+            <div></div><div></div><div></div>
+        </div>
+        <nav class="nav-links" id="navLinks">
+            <a href="#inicio" onclick="toggleMenu()">Inicio</a>
+            <a href="#paquetes" onclick="toggleMenu()">Paquetes</a>
+            <a href="#faq" onclick="toggleMenu()">Preguntas</a>
+            <a href="#contacto" onclick="toggleMenu()">Contacto</a>
+        </nav>
+    </header>
+
+    <a href="https://wa.me/5491100000000" class="wpp-flotante" target="_blank">WPP</a>
+
+    <main>
+        <div class="seccion-padding">
+            <div class="buscador-container">
+                <form class="buscador-form">
+                    <div class="campo"><label>Destino</label><select id="select-destino"><option value="España">España</option><option value="Italia">Italia</option><option value="Francia">Francia</option><option value="Suiza">Suiza</option></select></div>
+                    <div class="campo"><label>Mascota</label><select id="select-mascota"><option value="Perro">Perro</option><option value="Gato">Gato</option></select></div>
+                    <div class="campo"><label>Partida</label><input type="date"></div>
+                    <div class="campo"><label>Llegada</label><input type="date"></div>
+                    <button type="button" class="btn-buscar" onclick="ejecutarBusqueda()">BUSCAR</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="paquetes" class="seccion-padding">
+            <div class="titulo-seccion">
+                <h2>Paquetes GlobalPet</h2>
+                <p>Nuestra selección boutique para un viaje internacional sin fronteras.</p>
+            </div>
+            <div class="carrusel-track">
+                <div class="card-paquete"><h3>España All Inclusive</h3><p>Logística integral, traslados privados<br>y hoteles boutique pet-friendly.</p><div class="tag-destino">Península Ibérica</div></div>
+                <div class="card-paquete"><h3>Full Suiza</h3><p>La magia de los Alpes con planes<br>diseñados para amantes del outdoor.</p><div class="tag-destino">Alpes Suizos</div></div>
+                <div class="card-paquete"><h3>Total Italia</h3><p>Un recorrido por la Toscana y Roma<br>con todo resuelto para tu mascota.</p><div class="tag-destino">Corazón de Italia</div></div>
+                <div class="card-paquete"><h3>Francia Romántica</h3><p>Desde París hasta la Costa Azul<br>con traslados puerta a puerta.</p><div class="tag-destino">Francia Continental</div></div>
+                <div class="card-paquete"><h3>España - Francia</h3><p>Combinado multi-país con logística<br>técnica y legal garantizada.</p><div class="tag-destino">Ruta de los Pirineos</div></div>
+                <div class="card-paquete"><h3>Suiza - Italia</h3><p>Un viaje de contrastes diseñado<br>para el máximo confort familiar.</p><div class="tag-destino">Ruta de los Lagos</div></div>
+            </div>
+        </div>
+
+        <div id="experiencias" class="seccion-padding">
+            <div class="titulo-seccion"><h2>Experiencias Reales</h2></div>
+            <div class="experiencias-container">
+                <div class="foto-card"><div class="foto-placeholder"><img src="https://i.postimg.cc/BtWSQgr0/IMG-5331.jpg"></div><p>"Paleta disfrutando la Toscana."</p></div>
+                <div class="foto-card"><div class="foto-placeholder"><img src="https://i.postimg.cc/zvQLwK4B/IMG-5325.jpg"></div><p>"Cosmo en un día total en París."</p></div>
+                <div class="foto-card"><div class="foto-placeholder"><img src="https://i.postimg.cc/L5PqTnSW/IMG-5332.jpg"></div><p>"Gabriel, Martu y Bingo en Suiza."</p></div>
+            </div>
+        </div>
+
+        <div id="faq" class="seccion-padding">
+            <div class="titulo-seccion"><h2>Preguntas Frecuentes</h2></div>
+            <div class="faq-categoria">
+                <h3>Documentación y Salud</h3>
+                <details><summary>¿Qué papeles necesita mi mascota para viajar?</summary><p>En GlobalPet gestionamos tu CVI ante SENASA, certificados de salud y carnet de vacunas internacional.</p></details>
+                <details><summary>¿Es obligatorio el microchip?</summary><p>Sí, para el ingreso a Europa es un requisito indispensable cumplir con las normas ISO internacionales.</p></details>
+            </div>
+            <div class="faq-categoria">
+                <h3>Servicio y Logística</h3>
+                <details><summary>¿Ustedes se encargan de todo?</summary><p>Exacto. Somos tu único interlocutor para vuelos, hoteles, trámites legales y transporte en destino.</p></details>
+		<details><summary>¿Tiene que viajar en bodega?</summary><p>No es necesario puede viajar junto a vos pero si es demasiado grande puede hacerlo en la bodega perfectamente calefaccionada.</p></details>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <div class="footer-logo">GLOBALPET</div>
+                <div class="footer-text">
+                    Capital Federal, Buenos Aires | Argentina<br>
+                    © 2026 - Expertos en Turismo Pet-Inclusive Internacional
+                </div>
+            </div>
+            <div class="footer-redes">
+                <a href="#" class="btn-social">Instagram</a>
+                <a href="#" class="btn-social">X</a>
+                <a href="#" class="btn-social">TikTok</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DATOS INTEGRADOS PARA EVITAR EL ERROR 504
+        const datosViajes = [
+            { "destino": "España", "mascota": "Perro", "titulo": "Tour España Canino", "descripcion": "Salida grupal con alojamiento en Madrid y Barcelona." },
+            { "destino": "Italia", "mascota": "Perro", "titulo": "Italia Pet-Friendly", "descripcion": "Recorrido por Roma y Toscana con traslados privados." },
+            { "destino": "Francia", "mascota": "Gato", "titulo": "Gatos en París", "descripcion": "Hoteles boutique preparados para el confort felino." },
+            { "destino": "Suiza", "mascota": "Perro", "titulo": "Alpes con tu mejor amigo", "descripcion": "Senderismo y cabañas de lujo en los Alpes." }
+        ];
+
+        function toggleMenu() { document.getElementById("navLinks").classList.toggle("active"); }
+
+        function ejecutarBusqueda() {
+            const destino = document.getElementById('select-destino').value;
+            const mascota = document.getElementById('select-mascota').value;
+            
+            // Buscamos directamente en el array de arriba
+            const result = datosViajes.find(v => v.destino === destino && v.mascota === mascota);
+            
+            if (result) {
+                alert("¡Encontrado!\n" + result.titulo + ": " + result.descripcion);
+            } else {
+                alert("No hay una salida programada exacta para esa combinación, pero escribinos por WhatsApp y armamos tu plan GlobalPet a medida.");
+            }
+        }
+    </script>
+</body>
+</html>
